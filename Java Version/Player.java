@@ -1,5 +1,7 @@
 package StrategoJava;
 
+import java.awt.Graphics;
+
 public class Player {
 	private GamePiece pieces[];
 	private int displayColor;
@@ -40,5 +42,13 @@ public class Player {
 	public int getColor ()
 	{
 		return displayColor;
+	}
+	
+	public void draw(Graphics g)
+	{
+		for (int i = 0; i < 40; ++i)
+		{
+			pieces[i].draw(g);
+		}
 	}
 }

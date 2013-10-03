@@ -1,5 +1,6 @@
 package StrategoJava;
 
+import java.awt.Image;
 
 public class GamePiece extends Sprite {
 	private int playercode;
@@ -19,9 +20,9 @@ public class GamePiece extends Sprite {
 		showRank = false;
 	}
 	
-	void init (/*Texture text,*/, int r)
+	void init (Image i, int r)
 	{
-		Sprite(/*Texture text,*/, new Vector2D(-1, -1), 0, 0, 0);
+		super.init(i, new Vector2D(-1, -1), 0.0f, 0.0f, 0.0f);
 		rank = 'r';
 		switch(r)
 		{

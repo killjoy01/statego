@@ -1,5 +1,7 @@
 package StrategoJava;
 
+import java.awt.Graphics;
+
 public class GameBoard {
 	private Player player[];
 	int active;
@@ -346,6 +348,14 @@ public class GameBoard {
 			}
 		}
 		return true;
+	}
+	
+	public void draw(Graphics g)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			player[i].draw(g);
+		}
 	}
 
 }
