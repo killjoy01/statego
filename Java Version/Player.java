@@ -9,6 +9,10 @@ public class Player {
 	public Player()
 	{
 		pieces = new GamePiece[40];
+		for (int i = 0; i < 40; ++i)
+		{
+			pieces[i] = new GamePiece();
+		}
 		displayColor = 0;
 	}
 	
@@ -50,5 +54,17 @@ public class Player {
 		{
 			pieces[i].draw(g);
 		}
+	}
+	
+	public boolean checkForCollision(Vector2D p)
+	{
+		for (int i = 0; i < 40; ++i)
+		{
+			if ((pieces[i].getPosition().getX() == p.getX()) && (pieces[i].getPosition().getY() == p.getY()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

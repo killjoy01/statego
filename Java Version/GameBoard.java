@@ -9,6 +9,10 @@ public class GameBoard {
 	public GameBoard()
 	{
 		player = new Player[2];
+		for (int i = 0; i < 2; ++i)
+		{
+			player[i] = new Player();
+		}
 		active = 0;
 	}
 	

@@ -12,6 +12,7 @@ public class GamePiece extends Sprite {
 	
 	public GamePiece()
 	{
+		super();
 		playercode = 0;
 		rank = 0;
 		name = "";

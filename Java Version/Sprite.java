@@ -18,6 +18,8 @@ public class Sprite {
 	{
 		texture = null;
 		position = new Vector2D();
+		position.setX(-1);
+		position.setY(-1);
 		scalex = 0;
 		scaley = 0;
 		rotation = 0;
@@ -34,7 +36,7 @@ public class Sprite {
 	
 	public void setTexture(Image i) {texture = i;}
 	public Image getTexture() {return texture;}
-	public void setPosition(Vector2D a_v) {position = a_v;}
+	public void setPosition(Vector2D a_v) {position = new Vector2D(a_v.getX(), a_v.getY());}
 	public Vector2D getPosition() {return position;}
 	public void setScaleX(float a_s_x) {scalex = a_s_x;}
 	public void setScaleY(float a_s_y) {scaley = a_s_y;}
