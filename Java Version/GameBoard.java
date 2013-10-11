@@ -21,14 +21,10 @@ public class GameBoard {
 	public void setActive(int a) {active = a;}
 	public int getActive() {return active;}
 	
-	public void displayNewPosition(GamePiece p, Vector2D spacesfound[])
+	public void displayNewPosition(GamePiece p)
 	{
-		for (int j = 0; j < 20; j++)
-		{
-			spacesfound[j] = new Vector2D(-1, -1);
-		}
 		int i = 0;
-		int left = p.getPosition().getX() - 1, right = p.getPosition().getX() + 1, up = p.getPosition().getY() - 1, down = p.getPosition().getY() + 1;
+		int left = p.getPosition().getX() - 64, right = p.getPosition().getX() + 64, up = p.getPosition().getY() - 64, down = p.getPosition().getY() + 64;
 		boolean flagleft = true, flagright = true, flagup = true, flagdown = true;
 		while (flagleft)
 		{
@@ -39,19 +35,21 @@ public class GameBoard {
 			}
 			else if (checkForCollision(leftCheck))
 			{
-				spacesfound[i] = leftCheck;
+				Framework.movepositions[i].setX(leftCheck.getX());
+				Framework.movepositions[i].setY(leftCheck.getY());
 				i++;
 				flagleft = false;
 			}
-			else if (left == -1.0f)
+			else if (left <= -1)
 			{
 				flagleft = false;
 			}
 			else
 			{
-				spacesfound[i] = leftCheck;
+				Framework.movepositions[i].setX(leftCheck.getX());
+				Framework.movepositions[i].setY(leftCheck.getY());
 				i++;
-				left--;
+				left += 64;
 			}
 		}
 		while (flagright)
@@ -63,19 +61,21 @@ public class GameBoard {
 			}
 			else if (checkForCollision(rightCheck))
 			{
-				spacesfound[i] = rightCheck;
+				Framework.movepositions[i].setX(rightCheck.getX());
+				Framework.movepositions[i].setY(rightCheck.getY());
 				i++;
 				flagright = false;
 			}
-			else if (right > 9.0f)
+			else if (right >= 640)
 			{
 				flagright = false;
 			}
 			else
 			{
-				spacesfound[i] = rightCheck;
+				Framework.movepositions[i].setX(rightCheck.getX());
+				Framework.movepositions[i].setY(rightCheck.getY());
 				i++;
-				right++;
+				right += 64;
 			}
 		}
 		while (flagup)
@@ -87,19 +87,21 @@ public class GameBoard {
 			}
 			else if (checkForCollision(upCheck))
 			{
-				spacesfound[i] = upCheck;
+				Framework.movepositions[i].setX(upCheck.getX());
+				Framework.movepositions[i].setY(upCheck.getY());
 				i++;
 				flagup = false;
 			}
-			else if (up < 0.0f)
+			else if (up <= -1)
 			{
 				flagup = false;
 			}
 			else
 			{
-				spacesfound[i] = upCheck;
+				Framework.movepositions[i].setX(upCheck.getX());
+				Framework.movepositions[i].setY(upCheck.getY());
 				i++;
-				up = up--;
+				up -= 64;
 			}
 		}
 		while (flagdown)
@@ -111,25 +113,29 @@ public class GameBoard {
 			}
 			else if (checkForCollision(downCheck))
 			{
-				spacesfound[i] = downCheck;
+				Framework.movepositions[i].setX(downCheck.getX());
+				Framework.movepositions[i].setY(downCheck.getY());
 				i++;
 				flagdown = false;
 			}
-			else if (down > 9.0f)
+			else if (down >= 640)
 			{
 				flagdown = false;
 			}
 			else
 			{
-				spacesfound[i] = downCheck;
+				Framework.movepositions[i].setX(downCheck.getX());
+				Framework.movepositions[i].setY(downCheck.getY());
 				i++;
-				down++;
+				down += 64;
 			}
 		}
 	}
 	
 	public boolean checkForCollision(Vector2D p)
 	{
+		System.out.println(p.getX());
+		System.out.println(p.getY());
 		for (int i = 0; i < 40; i++)
 		{
 			if (active == 0)
@@ -171,18 +177,20 @@ public class GameBoard {
 		}
 		if (active == 0)
 		{
-			GamePiece g = new GamePiece();
+			GamePiece g = null;;
 			for (int i = 0; i < 40; i++)
 			{
-				if ((player[0].getGamePiece(i).getPosition() == p) && (player[0].getGamePiece(i).getActive()))
+				if (((player[0].getGamePiece(i).getPosition().getX() / 64) == (p.getX() / 64)) && 
+				    ((player[0].getGamePiece(i).getPosition().getY() / 64) == (p.getY() / 64)) && 
+				    (player[0].getGamePiece(i).getActive()))
 				{
 					g = player[0].getGamePiece(i);
 				}
 			}
-			/*if (g == NULL)
+			if (g == null)
 			{
 				return false;
-			}*/
+			}
 			if ((g.getRank() == 10) || (g.getRank() == -1))
 			{
 				return false;
@@ -195,18 +203,21 @@ public class GameBoard {
 		}
 		else if (active == 1)
 		{
-			GamePiece g = new GamePiece();
+			System.out.println("Here!");
+			GamePiece g = null;
 			for (int i = 0; i < 40; i++)
 			{
-				if ((player[1].getGamePiece(i).getPosition() == p) && (player[0].getGamePiece(i).getActive()))
+				if (((player[1].getGamePiece(i).getPosition().getX() / 64) == (p.getX() / 64)) && 
+					((player[1].getGamePiece(i).getPosition().getY() / 64) == (p.getY() / 64)) && 
+					(player[1].getGamePiece(i).getActive()))
 				{
 					g = player[1].getGamePiece(i);
 				}
 			}
-			/*if (g == NULL)
+			if (g == null)
 			{
 				return false;
-			}*/
+			}
 			if ((g.getRank() == 10) || (g.getRank() == -1))
 			{
 				return false;
@@ -227,14 +238,19 @@ public class GameBoard {
 		{
 			if (checkForCollision(p))
 			{
+				System.out.println("Entered Collision");
 				GamePiece g = new GamePiece();
-				for (int i = 0; i < 40; i++)
+				for (int i = 0; i < 40; ++i)
 				{
-					if ((player[1].getGamePiece(i).getPosition() == p) && (player[1].getGamePiece(i).getActive()))
+					if ((((player[1].getGamePiece(i).getPosition().getX() / 64) == (p.getX() / 64)) &&
+						 ((player[1].getGamePiece(i).getPosition().getY() / 64) == (p.getY() / 64)))
+						&& (player[1].getGamePiece(i).getActive()))
 					{
+						System.out.println("Got Piece");
 						g = player[1].getGamePiece(i);
 					}
 				}
+				System.out.println("Resolving Collision");
 				if ((y.getRank() == 0) && (g.getRank() == 9))  //spy removing the marshal
 				{
 					g.setActive(false);
@@ -251,6 +267,7 @@ public class GameBoard {
 				}
 				else if (y.getRank() == g.getRank())  //if the ranks are a tie
 				{
+					System.out.println("Take Piece!");
 					g.setActive(false);
 					y.setActive(false);
 					return true;
@@ -271,7 +288,7 @@ public class GameBoard {
 			}
 			else //move to that position
 			{
-				if ((p.getX() < 0.0f) || (p.getX() > 9.0f) || (p.getY() < 0.0f) || (p.getY() > 9.0f))
+				if (((p.getX() / 64) < 0.0f) || ((p.getX() / 64) > 9.0f) || ((p.getY() / 64) < 0.0f) || ((p.getY() / 64) > 9.0f))
 				{
 					return false;
 				}
@@ -296,7 +313,9 @@ public class GameBoard {
 				GamePiece g = new GamePiece();
 				for (int i = 0; i < 40; i++)
 				{
-					if ((player[0].getGamePiece(i).getPosition() == p) && (player[0].getGamePiece(i).getActive()))
+					if (((player[0].getGamePiece(i).getPosition().getX() / 64) == (p.getX() / 64) &&
+						 ((player[0].getGamePiece(i).getPosition().getY() / 64) == (p.getY() / 64)))
+							&& (player[0].getGamePiece(i).getActive()))
 					{
 						g = player[0].getGamePiece(i);
 					}
@@ -315,6 +334,7 @@ public class GameBoard {
 				}
 				else if (y.getRank() == g.getRank())
 				{
+					System.out.println("Take Piece!");
 					g.setActive(false);
 					y.setActive(false);
 					return true;
@@ -333,7 +353,7 @@ public class GameBoard {
 			}
 			else
 			{
-				if ((p.getX() < 0.0f) || (p.getX() > 9.0f) || (p.getY() < 0.0f) || (p.getY() > 9.0f))
+				if (((p.getX() / 64) < 0.0f) || ((p.getX() / 64) > 9.0f) || ((p.getY() / 64) < 0.0f) || ((p.getY() / 64) > 9.0f))
 				{
 					return false;
 				}

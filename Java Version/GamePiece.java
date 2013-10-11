@@ -126,7 +126,7 @@ public class GamePiece extends Sprite {
 	
 	public boolean checkForCollision(Vector2D p)
 	{
-		if (position == p)
+		if ((position.getX() == p.getX()) && (position.getY() == p.getY()))
 		{
 			if (isActive)
 			{

@@ -17,17 +17,21 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 	private GameBoard board;
 	private Font f = new Font("Courier New", Font.BOLD|Font.ITALIC, 20);
 	private Image layout;
-	public final int MENU = 0, INIT = 1, PROGRAM = 2, SCOUT = 3, CREDITS_SCENE = 4, GAME_OVER = 5, QUIT = 6;
+	public final int MENU = 0, INIT = 1, PROGRAM = 2, SCOUT = 3, CREDITS_SCENE = 4, GAME_OVER = 5, QUIT = 6, SELECTED = 7;
 	public int state;
 	private GamePiece thepieces[];
 	private Image redpieces[];
 	private Image bluepieces[];
+	private Image selector;
+	private Image selectSpace;
 	public boolean isRunning = true;
 	private Thread thread;
 	private boolean running = true;
 	private static Vector2D initPosition;
 	private static int setPiece;
 	private static int pieceType;
+	private Vector2D click;
+	public static Vector2D movepositions[];
 	public Framework()
 	{
 		setFocusable(true);
@@ -72,6 +76,14 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 		bluepieces[10] = Toolkit.getDefaultToolkit().createImage("bluespy.png");
 		bluepieces[11] = Toolkit.getDefaultToolkit().createImage("bluebomb.png");
 		bluepieces[12] = Toolkit.getDefaultToolkit().createImage("blueflag.png");
+		selector = Toolkit.getDefaultToolkit().createImage("selector.png");
+		selectSpace = Toolkit.getDefaultToolkit().createImage("selectspace.jpg");
+		click = new Vector2D();
+		movepositions = new Vector2D[20];
+		for (int i = 0; i < 20; ++i)
+		{
+			movepositions[i] = new Vector2D(-1, -1);
+		}
 		makeGamePieces();
 		state = INIT;
 	}
@@ -137,8 +149,6 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 			{
 				if (board.getActive() == 0)	
 				{
-					System.out.println(initPosition.getX());
-					System.out.println(initPosition.getY());
 					g.drawImage(thepieces[setPiece].getTexture(), initPosition.getX(),
 								initPosition.getY(), null);
 				}
@@ -147,6 +157,29 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 					g.drawImage(thepieces[setPiece].getTexture(), (int)initPosition.getX(),
 							initPosition.getY(), null);
 				}
+			}
+			if (state == SCOUT)
+			{
+				for (int i = 0; i < 20; ++i)
+				{
+					if ((movepositions[i].getX() > -1) && (movepositions[i].getY() > -1))
+					{
+						g.drawImage(selectSpace, (int)movepositions[i].getX(), (int)movepositions[i].getY(), null);
+					}
+				}
+			}
+			if (state == PROGRAM || state == SELECTED || state == SCOUT)
+			{
+				for (int i = 0; i < 40; ++i)
+				{
+					if (board.getPlayer(board.getActive()).getGamePiece(i).getSelection())
+					{
+						g.drawImage(selector, (int)board.getPlayer(board.getActive()).getGamePiece(i).getPosition().getX(),
+								(int)board.getPlayer(board.getActive()).getGamePiece(i).getPosition().getY(),
+								null);
+					}
+				}
+					
 			}
 		}
 		//catch (Exception e){System.out.println(e.getMessage());}
@@ -164,15 +197,10 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 	}
 	public void mousePressed(MouseEvent e) 
 	{
-		if (state == INIT)
-		{
-			if (e.getButton() == MouseEvent.BUTTON1)
-			{
-			}
-		}
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -185,8 +213,122 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 		
 	}
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent e) 
+	{
+		if (state == PROGRAM)
+		{
+			if (e.getButton() == MouseEvent.BUTTON1)
+			{
+				click.setX(e.getX());
+				click.setY(e.getY());
+				board.makeSelection(click);
+				for (int i = 0; i < 40; i++)
+				{
+					if ((board.getPlayer(board.getActive()).getGamePiece(i).getSelection()) && 
+						(board.getPlayer(board.getActive()).getGamePiece(i).getActive()))
+					{
+						 GamePiece p = board.getPlayer(board.getActive()).getGamePiece(i);
+						 if (p.getRank() == 1)
+						 {
+							 state = SCOUT;
+							 board.displayNewPosition(p);
+						 }
+						 else
+						 {
+							 state = SELECTED;
+						 }
+					}
+				}
+			}
+		}
+		if (state == SCOUT)
+		{
+			if (e.getButton() == MouseEvent.BUTTON1)
+			{
+				click.setX(e.getX() / 64 * 64);
+				click.setY(e.getY() / 64 * 64);
+				boolean checker = false;
+				for (int i = 0; i < 20; ++i)
+				{
+					if ((click.getX() == movepositions[i].getX()) && (click.getY() == movepositions[i].getY()))
+					{
+						checker = true;
+						i = 20;
+					}
+				}
+				if (!checker)
+				{
+					return;
+				}
+				GamePiece g = null;
+				for (int i = 0; i < 40; i++)
+				{
+					if (board.getActive() == 0)
+					{
+						if (board.getPlayer(0).getGamePiece(i).getSelection())
+						{
+							g = board.getPlayer(0).getGamePiece(i);
+						}
+					}
+					if (board.getActive() == 1)
+					{
+						if (board.getPlayer(1).getGamePiece(i).getSelection())
+						{
+							g = board.getPlayer(1).getGamePiece(i);
+						}
+					}
+				}
+				if(board.move(g, click))
+				{
+					state = PROGRAM;
+					for (int i = 0; i < 40; ++i)
+					{
+						if (board.getActive() == 0)
+						{
+							board.getPlayer(0).getGamePiece(i).setSelection(false);
+						}
+						if (board.getActive() == 1)
+						{
+							board.getPlayer(1).getGamePiece(i).setSelection(false);
+						}
+					}
+					for (int i = 0; i < 20; ++i)
+					{
+						movepositions[i].setX(-1);
+						movepositions[i].setY(-1);
+					}
+					if (board.getActive() == 0)
+					{
+						board.setActive(1);
+					}
+					else if (board.getActive() == 1)
+					{
+						board.setActive(0);
+					}
+				}
+			}
+			else if (e.getButton() == MouseEvent.BUTTON3)
+			{
+				state = PROGRAM;
+				for (int i = 0; i < 40; ++i)
+				{
+					if (board.getActive() == 0)
+					{
+						board.getPlayer(0).getGamePiece(i).setSelection(false);
+					}
+					if (board.getActive() == 1)
+					{
+						board.getPlayer(1).getGamePiece(i).setSelection(false);
+					}
+				}
+				for (int i = 0; i < 20; ++i)
+				{
+					movepositions[i].setX(-1);
+					movepositions[i].setY(-1);
+				}
+			}
+			// TODO Auto-generated method stub
+		}
 		
 	}
 	
@@ -203,7 +345,6 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
     /** Handle the key released event from the text field. */
     public void keyReleased(KeyEvent e) {
     
-    	System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
     	if (state == INIT)
     	{
     		if (board.getActive() == 0)
@@ -294,11 +435,61 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
     			}
     			if (e.getKeyCode() == KeyEvent.VK_DOWN)
     			{
-    				if (initPosition.getY() < (4 * bluepieces[0].getWidth(null)))
+    				if (initPosition.getY() < (3 * bluepieces[0].getWidth(null)))
     				{
     					initPosition.setY(initPosition.getY() + redpieces[0].getWidth(null));
     				}
     			}
+    		}
+    	}
+    	if (state == SELECTED)
+    	{
+    		GamePiece g = null;
+    		Vector2D collision = new Vector2D();
+    		boolean moved = false;
+    		for (int i = 0; i < 40; ++i)
+    		{
+    			if ((board.getPlayer(board.getActive()).getGamePiece(i).getSelection()) && 
+					(board.getPlayer(board.getActive()).getGamePiece(i).getActive()))
+    			{
+    				g = (board.getPlayer(board.getActive()).getGamePiece(i));
+    				collision.setX(g.getPosition().getX());
+    				collision.setY(g.getPosition().getY());
+    				System.out.println(collision.getX());
+    				System.out.println(collision.getY());
+    			}
+    		}
+    		if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+    		{
+    			collision.setX(collision.getX() + 64);
+    			moved = board.move(g, collision);
+    		}
+    		if (e.getKeyCode() == KeyEvent.VK_LEFT)
+    		{
+    			collision.setX(collision.getX() - 64);
+    			moved = board.move(g, collision);
+    		}	
+    		if (e.getKeyCode() == KeyEvent.VK_DOWN)
+    		{
+    			collision.setY(collision.getY() + 64);
+    			moved = board.move(g, collision);
+    		}
+    		if (e.getKeyCode() == KeyEvent.VK_UP)
+    		{
+    			collision.setY(collision.getY() - 64);
+    			moved = board.move(g, collision);
+    		}
+    		if (moved)
+    		{
+    			if (board.getActive() == 0)
+    			{
+    				board.setActive(1);
+    			}
+    			else
+    			{
+    				board.setActive(0);
+    			}
+    			state = PROGRAM;
     		}
     	}
     }
