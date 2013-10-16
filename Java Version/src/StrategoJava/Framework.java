@@ -10,6 +10,14 @@ import java.awt.Image;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import GameState.MenuState;
+import GameState.GameStateManager;
+import GameState.GameState;
+import Main.Game;
+import Main.GamePanel;
+import TileMap.Background;
+
+
 
 
 public class Framework extends JPanel implements MouseListener, KeyListener, Runnable
@@ -85,7 +93,7 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 			movepositions[i] = new Vector2D(-1, -1);
 		}
 		makeGamePieces();
-		state = INIT;
+		state = MENU;
 	}
 	
 	public void addNotify()
@@ -101,6 +109,11 @@ public class Framework extends JPanel implements MouseListener, KeyListener, Run
 	{
 		super.paintComponent(g);
 		g.setFont(f);
+		while(state == MENU)
+		{
+			
+			
+		}
 		for (int i = 0; i < 10; ++i)
 		{
 			for (int j = 0; j < 10; ++j)
