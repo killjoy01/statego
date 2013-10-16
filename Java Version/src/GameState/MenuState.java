@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import TileMap.Background;
+import StrategoJava.Framework;
+import StrategoJava.Stratego;
 
 public class MenuState extends GameState {
 	
@@ -43,7 +45,6 @@ public class MenuState extends GameState {
 		switch(gameStateManager.getMenuState()){
 		case 0: //  MAIN_MENU State
 		{
-			
 		//}
 		/////////////////////////////////////////////////////////////////////////////
 		//  TODO:  Add an actual background image for Title Screen
@@ -120,6 +121,8 @@ public class MenuState extends GameState {
 		if(gameStateManager.getMenuState() == 0){
 		switch(currentChoice){
 		case 0:  //  TODO:  Starts the game, needs implementing
+			Stratego.main(null);
+			//f.run();
 			break;
 		case 1:  //  TODO:  Display options / difficulty, needs implementing
 			gameStateManager.setMenuState(1);
