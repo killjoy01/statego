@@ -49,7 +49,7 @@ public class GameBoard {
 				Framework.movepositions[i].setX(leftCheck.getX());
 				Framework.movepositions[i].setY(leftCheck.getY());
 				i++;
-				left += 64;
+				left -= 64;
 			}
 		}
 		while (flagright)
